@@ -32,7 +32,7 @@ public class ConfigWeb extends WebSecurityConfigurerAdapter implements WebMvcCon
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/usuario/logar", "/usuario").
+        http.authorizeRequests().antMatchers("/usuario/logar").
                 permitAll().
                 antMatchers(SWAGGER_WHITELIST).
                 permitAll().
