@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Familiar {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(length = 100)
@@ -30,6 +30,16 @@ public class Familiar {
     @ManyToOne()
     @JoinColumn(name = "donatario_id", nullable = false)
     private Donatario donatario;
+
+    public Familiar() {
+    }
+
+    public Familiar(String nome, byte idade, String nivelParentesco, Donatario donatario) {
+        this.nome = nome;
+        this.idade = idade;
+        this.nivelParentesco = nivelParentesco;
+        this.donatario = donatario;
+    }
 
     public Long getId() {
         return id;

@@ -8,7 +8,6 @@ import javax.validation.Valid;
 
 import br.com.mactechnology.macdonation.exception.BusinessRulesException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.mactechnology.macdonation.dto.DtoToken;
@@ -82,7 +80,7 @@ public class UsuarioController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> incluir(@Valid @RequestBody InputUsuario input) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         try {
-            Usuario usuario = usuarioService.salvar(usuarioMapper.toEntity(input));
+            Usuario usuario = usuarioService.save(usuarioMapper.toEntity(input));
             return ResponseEntity.ok(usuarioMapper.toDto(usuario));
         }  catch (BusinessRulesException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -91,16 +89,16 @@ public class UsuarioController {
 
     @PutMapping(value = "/{usuarioId}/autorizar", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DtoUsuario> autorizar(@PathVariable Long usuarioId) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        Usuario usuario = usuarioService.buscar(usuarioId);
+        Usuario usuario = usuarioService.findById(usuarioId);
         usuario.setAutorizado(true);
-        return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.salvar(usuario)));
+        return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.save(usuario)));
     }
 
     @PutMapping(value = "/{usuarioId}/setAdmin", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DtoUsuario> setAdmin(@PathVariable Long usuarioId) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        Usuario usuario = usuarioService.buscar(usuarioId);
+        Usuario usuario = usuarioService.findById(usuarioId);
         usuario.setAdmin(true);
-        return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.salvar(usuario)));
+        return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.save(usuario)));
     }
 
     @DeleteMapping(value = "/{usuarioId}")
@@ -109,13 +107,13 @@ public class UsuarioController {
             return ResponseEntity.notFound().build();
         }
 
-        usuarioService.excluir(usuarioId);
+        usuarioService.delete(usuarioId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/logar")
     public ResponseEntity<?> logar(@RequestBody InputLogin input) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        String hash = usuarioService.encriptarSenha(input.getSenha());
+        String hash = usuarioService.encriptPassword(input.getSenha());
         input.setSenha(hash);
 
         try {

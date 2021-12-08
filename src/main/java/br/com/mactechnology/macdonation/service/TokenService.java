@@ -15,10 +15,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Service
 public class TokenService {
 
-    @Value("${maccourses.jwt.expiracao}")
+    @Value("${macdonations.jwt.expiracao}")
     private String expiracao;
 
-    @Value("${maccourses.jwt.secret}")
+    @Value("${macdonations.jwt.secret}")
     private String secret;
 
     public String gerarToken(Authentication auth) {

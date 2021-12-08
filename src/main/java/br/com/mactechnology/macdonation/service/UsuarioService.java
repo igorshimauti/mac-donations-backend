@@ -22,7 +22,7 @@ public class UsuarioService implements UserDetailsService {
     private UsuarioRepository usuarioRepository;
 
     @Transactional
-    public Usuario salvar(Usuario usuario) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public Usuario save(Usuario usuario) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         if (usuarioRepository.existsByEmail(usuario.getEmail()) && usuario.getId() == null) {
             throw new BusinessRulesException("Usuário com o login '" + usuario.getEmail() + "' já foi cadastrado anteriormente.");
         }
@@ -35,21 +35,21 @@ public class UsuarioService implements UserDetailsService {
             usuario.setAutorizado(false);
             usuario.setAdmin(false);
 
-            String hash = encriptarSenha(usuario.getSenha());
+            String hash = encriptPassword(usuario.getSenha());
             usuario.setSenha(hash);
         }
 
         return usuarioRepository.save(usuario);
     }
 
-    @Transactional
-    public void excluir(Long usuarioId) {
-        usuarioRepository.deleteById(usuarioId);
+    @Transactional(readOnly = true)
+    public Usuario findById(Long usuarioId) {
+        return usuarioRepository.findById(usuarioId).orElseThrow(() -> new BusinessRulesException("Usuário não encontrado."));
     }
 
-    @Transactional(readOnly = true)
-    public Usuario buscar(Long usuarioId) {
-        return usuarioRepository.findById(usuarioId).orElseThrow(() -> new BusinessRulesException("Usuário não encontrado."));
+    @Transactional
+    public void delete(Long usuarioId) {
+        usuarioRepository.deleteById(usuarioId);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.findByEmail(username).orElseThrow(() -> new BusinessRulesException("Usuário não encontrado."));
     }
 
-    public String encriptarSenha(String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public String encriptPassword(String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest algoritmo = MessageDigest.getInstance("SHA-256");
         byte messageDigest[] = algoritmo.digest(senha.getBytes("UTF-8"));
         StringBuilder hexString = new StringBuilder();

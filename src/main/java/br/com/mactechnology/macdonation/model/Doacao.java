@@ -5,13 +5,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "doacao")
 public class Doacao {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column
@@ -26,6 +27,15 @@ public class Doacao {
     @ManyToOne()
     @JoinColumn(name = "donatario_id", nullable = false)
     private Donatario donatario;
+
+    public Doacao() {
+    }
+
+    public Doacao(LocalDate data, String descricao, Donatario donatario) {
+        this.data = data;
+        this.descricao = descricao;
+        this.donatario = donatario;
+    }
 
     public Long getId() {
         return id;
@@ -57,5 +67,18 @@ public class Doacao {
 
     public void setDonatario(Donatario donatario) {
         this.donatario = donatario;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Doacao doacao = (Doacao) o;
+        return id.equals(doacao.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

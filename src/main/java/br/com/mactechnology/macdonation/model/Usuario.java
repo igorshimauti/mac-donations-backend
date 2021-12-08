@@ -21,7 +21,7 @@ public class Usuario implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(length = 150, nullable = false)
@@ -51,6 +51,16 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     @NotNull
     private Boolean admin;
+
+    public Usuario() {
+    }
+
+    public Usuario(String nome, String cpf, String email, String senha) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.email = email;
+        this.senha = senha;
+    }
 
     public Long getId() {
         return id;

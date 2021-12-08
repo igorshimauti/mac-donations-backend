@@ -9,5 +9,4 @@ class MacDonationApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

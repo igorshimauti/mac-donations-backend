@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Endereco {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(length = 9, nullable = false)
@@ -46,6 +46,19 @@ public class Endereco {
     @Column(length = 50)
     @Size(max = 50)
     private String complemento;
+
+    public Endereco() {
+    }
+
+    public Endereco(String cep, String uf, String cidade, String bairro, String logradouro, String numero, String complemento) {
+        this.cep = cep;
+        this.uf = uf;
+        this.cidade = cidade;
+        this.bairro = bairro;
+        this.logradouro = logradouro;
+        this.numero = numero;
+        this.complemento = complemento;
+    }
 
     public Long getId() {
         return id;

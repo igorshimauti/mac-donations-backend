@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Donatario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(length = 150)
@@ -41,6 +41,19 @@ public class Donatario {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "donatario")
     private List<Doacao> doacoes;
+
+    public Donatario() {
+    }
+
+    public Donatario(String nome, String cpf, LocalDate dataNascimento, String celular, Endereco endereco, List<Familiar> familiares, List<Doacao> doacoes) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.dataNascimento = dataNascimento;
+        this.celular = celular;
+        this.endereco = endereco;
+        this.familiares = familiares;
+        this.doacoes = doacoes;
+    }
 
     public Long getId() {
         return id;

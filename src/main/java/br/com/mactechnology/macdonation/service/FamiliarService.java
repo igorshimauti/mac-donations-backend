@@ -1,9 +1,7 @@
 package br.com.mactechnology.macdonation.service;
 
 import br.com.mactechnology.macdonation.exception.BusinessRulesException;
-import br.com.mactechnology.macdonation.model.Doacao;
 import br.com.mactechnology.macdonation.model.Familiar;
-import br.com.mactechnology.macdonation.repository.DoacaoRepository;
 import br.com.mactechnology.macdonation.repository.FamiliarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
