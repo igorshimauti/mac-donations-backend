@@ -1,12 +1,33 @@
 package br.com.mactechnology.macdonation.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.constraints.NotBlank;
+
 public class DtoUsuario {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
+
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private String nome;
+
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private String cpf;
+
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String senha;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Boolean autorizado;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Boolean admin;
 
     public Long getId() {
@@ -39,6 +60,14 @@ public class DtoUsuario {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public Boolean getAutorizado() {

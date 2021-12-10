@@ -26,8 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.mactechnology.macdonation.dto.DtoToken;
 import br.com.mactechnology.macdonation.dto.DtoUsuario;
-import br.com.mactechnology.macdonation.dto.input.InputLogin;
-import br.com.mactechnology.macdonation.dto.input.InputUsuario;
+import br.com.mactechnology.macdonation.dto.DtoLogin;
 import br.com.mactechnology.macdonation.mapper.UsuarioMapper;
 import br.com.mactechnology.macdonation.model.Usuario;
 import br.com.mactechnology.macdonation.repository.UsuarioRepository;
@@ -55,40 +54,40 @@ public class UsuarioController {
     @Autowired
     private TokenService tokenService;
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DtoUsuario>> listar() {
-        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioRepository.findAll()));
-    }
-
-    @GetMapping(value = "/bloqueados", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DtoUsuario>> listarBloqueados() {
-        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioRepository.findByAutorizado(false)));
-    }
-
-    @GetMapping(value = "/autorizados", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DtoUsuario>> listarAutorizados() {
-        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioRepository.findByAutorizado(true)));
-    }
-
-    @GetMapping(value = "/{usuarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoUsuario> buscar(@PathVariable Long usuarioId) {
-        return usuarioRepository.findById(usuarioId)
-                .map(usuario -> ResponseEntity.ok(usuarioMapper.toDto(usuario)))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> incluir(@Valid @RequestBody InputUsuario input) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public ResponseEntity<?> create(@Valid @RequestBody DtoUsuario dtoUsuario) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         try {
-            Usuario usuario = usuarioService.save(usuarioMapper.toEntity(input));
+            Usuario usuario = usuarioService.save(usuarioMapper.toEntity(dtoUsuario));
             return ResponseEntity.ok(usuarioMapper.toDto(usuario));
         }  catch (BusinessRulesException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DtoUsuario>> read() {
+        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioRepository.findAll()));
+    }
+
+    @GetMapping(value = "/bloqueados", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DtoUsuario>> readBlocked() {
+        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioRepository.findByAutorizado(false)));
+    }
+
+    @GetMapping(value = "/autorizados", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DtoUsuario>> readAuthorized() {
+        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioRepository.findByAutorizado(true)));
+    }
+
+    @GetMapping(value = "/{usuarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DtoUsuario> readById(@PathVariable Long usuarioId) {
+        return usuarioRepository.findById(usuarioId)
+                .map(usuario -> ResponseEntity.ok(usuarioMapper.toDto(usuario)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PutMapping(value = "/{usuarioId}/autorizar", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoUsuario> autorizar(@PathVariable Long usuarioId) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public ResponseEntity<DtoUsuario> authorize(@PathVariable Long usuarioId) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         Usuario usuario = usuarioService.findById(usuarioId);
         usuario.setAutorizado(true);
         return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.save(usuario)));
@@ -102,7 +101,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping(value = "/{usuarioId}")
-    public ResponseEntity<Void> excluir(@PathVariable Long usuarioId) {
+    public ResponseEntity<Void> delete(@PathVariable Long usuarioId) {
         if (!usuarioRepository.existsById(usuarioId)) {
             return ResponseEntity.notFound().build();
         }
@@ -112,7 +111,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/logar")
-    public ResponseEntity<?> logar(@RequestBody InputLogin input) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public ResponseEntity<?> logar(@RequestBody DtoLogin input) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String hash = usuarioService.encriptPassword(input.getSenha());
         input.setSenha(hash);
 

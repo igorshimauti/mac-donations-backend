@@ -1,7 +1,6 @@
 package br.com.mactechnology.macdonation.mapper;
 
 import br.com.mactechnology.macdonation.dto.DtoDonatario;
-import br.com.mactechnology.macdonation.dto.input.InputDonatario;
 import br.com.mactechnology.macdonation.model.Donatario;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class DonatarioMapper {
         return donatarios.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public Donatario toEntity(InputDonatario inputDonatario) {
-        return modelMapper.map(inputDonatario, Donatario.class);
+    public Donatario toEntity(DtoDonatario dtoDonatario) {
+        return modelMapper.map(dtoDonatario, Donatario.class);
     }
 }

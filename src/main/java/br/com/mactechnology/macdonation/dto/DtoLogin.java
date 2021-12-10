@@ -1,13 +1,13 @@
-package br.com.mactechnology.macdonation.dto.input;
+package br.com.mactechnology.macdonation.dto;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-public class InputLogin {
+public class DtoLogin {
 
 	private String email;
 	private String senha;
 
-	public InputLogin(String email, String senha) {
+	public DtoLogin(String email, String senha) {
 		this.email = email;
 		this.senha = senha;
 	}

@@ -1,13 +1,22 @@
 package br.com.mactechnology.macdonation.dto;
 
-import br.com.mactechnology.macdonation.model.Donatario;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class DtoDoacao {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
+
+    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private LocalDate data;
+
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private String descricao;
 
     public Long getId() {

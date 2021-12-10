@@ -1,7 +1,6 @@
 package br.com.mactechnology.macdonation.mapper;
 
 import br.com.mactechnology.macdonation.dto.DtoFamiliar;
-import br.com.mactechnology.macdonation.dto.input.InputFamiliar;
 import br.com.mactechnology.macdonation.model.Familiar;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class FamiliarMapper {
         return familiares.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public Familiar toEntity(InputFamiliar inputFamiliar) {
-        return modelMapper.map(inputFamiliar, Familiar.class);
+    public Familiar toEntity(DtoFamiliar dtoFamiliar) {
+        return modelMapper.map(dtoFamiliar, Familiar.class);
     }
 }

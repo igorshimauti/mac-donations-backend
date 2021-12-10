@@ -1,6 +1,6 @@
 package br.com.mactechnology.macdonation.service;
 
-import br.com.mactechnology.macdonation.dto.input.InputLogin;
+import br.com.mactechnology.macdonation.dto.DtoLogin;
 import br.com.mactechnology.macdonation.exception.BusinessRulesException;
 import br.com.mactechnology.macdonation.model.Usuario;
 import org.junit.jupiter.api.*;
@@ -33,7 +33,7 @@ public class TokenServiceTest {
     private AuthenticationManager authenticationManager;
 
     private Usuario usuario;
-    private InputLogin login;
+    private DtoLogin login;
     private String token;
 
     @BeforeAll
@@ -48,7 +48,7 @@ public class TokenServiceTest {
 
         this.usuario.setAutorizado(true);
         this.usuario = usuarioService.save(this.usuario);
-        this.login = new InputLogin(this.usuario.getEmail(), this.usuario.getSenha());
+        this.login = new DtoLogin(this.usuario.getEmail(), this.usuario.getSenha());
     }
 
     @Test

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.mactechnology.macdonation.dto.DtoUsuario;
-import br.com.mactechnology.macdonation.dto.input.InputUsuario;
 import br.com.mactechnology.macdonation.model.Usuario;
 
 @Component
@@ -25,7 +24,7 @@ public class UsuarioMapper {
         return usuarios.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public Usuario toEntity(InputUsuario input) {
-        return modelMapper.map(input, Usuario.class);
+    public Usuario toEntity(DtoUsuario dtoUsuario) {
+        return modelMapper.map(dtoUsuario, Usuario.class);
     }
 }

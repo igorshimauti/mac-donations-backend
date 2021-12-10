@@ -1,7 +1,6 @@
 package br.com.mactechnology.macdonation.controller;
 
 import br.com.mactechnology.macdonation.dto.DtoDonatario;
-import br.com.mactechnology.macdonation.dto.input.InputDonatario;
 import br.com.mactechnology.macdonation.mapper.DonatarioMapper;
 import br.com.mactechnology.macdonation.model.Donatario;
 import br.com.mactechnology.macdonation.service.DonatarioService;
@@ -27,31 +26,31 @@ public class DonatarioController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DtoDonatario> createDonatario(@Valid @RequestBody InputDonatario inputDonatario) {
-        Donatario donatario = donatarioMapper.toEntity(inputDonatario);
+    public ResponseEntity<DtoDonatario> create(@Valid @RequestBody DtoDonatario dtoDonatario) {
+        Donatario donatario = donatarioMapper.toEntity(dtoDonatario);
         Donatario donatarioSalvo = donatarioService.save(donatario);
         return ResponseEntity.ok(donatarioMapper.toDto(donatarioSalvo));
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DtoDonatario>> readDonatarios() {
+    public ResponseEntity<List<DtoDonatario>> read() {
         List<Donatario> donatarios = donatarioService.findAll();
         return ResponseEntity.ok(donatarioMapper.toCollectionDto(donatarios));
     }
 
     @GetMapping(value = "/{donatarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoDonatario> readDonatarioById(@PathVariable Long donatarioId) {
+    public ResponseEntity<DtoDonatario> readById(@PathVariable Long donatarioId) {
         Donatario donatario = donatarioService.findById(donatarioId);
         return ResponseEntity.ok(donatarioMapper.toDto(donatario));
     }
 
     @PutMapping(value = "/{donatarioId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoDonatario> updateDonatario(@PathVariable Long donatarioId, @Valid @RequestBody InputDonatario inputDonatario) {
+    public ResponseEntity<DtoDonatario> update(@PathVariable Long donatarioId, @Valid @RequestBody DtoDonatario dtoDonatario) {
         if (!donatarioService.existsById(donatarioId)) {
             return ResponseEntity.notFound().build();
         }
 
-        Donatario donatario = donatarioMapper.toEntity(inputDonatario);
+        Donatario donatario = donatarioMapper.toEntity(dtoDonatario);
         donatario.setId(donatarioId);
 
         Donatario donatarioSalvo = donatarioService.save(donatario);
@@ -59,7 +58,7 @@ public class DonatarioController {
     }
 
     @DeleteMapping(value = "/{donatarioId}")
-    public ResponseEntity<Void> deleteDonatario(@PathVariable Long donatarioId) {
+    public ResponseEntity<Void> delete(@PathVariable Long donatarioId) {
         if (!donatarioService.existsById(donatarioId)) {
             return ResponseEntity.notFound().build();
         }

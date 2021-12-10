@@ -1,7 +1,6 @@
 package br.com.mactechnology.macdonation.mapper;
 
 import br.com.mactechnology.macdonation.dto.DtoDoacao;
-import br.com.mactechnology.macdonation.dto.input.InputDoacao;
 import br.com.mactechnology.macdonation.model.Doacao;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class DoacaoMapper {
         return doacoes.stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public Doacao toEntity(InputDoacao input) {
-        return modelMapper.map(input, Doacao.class);
+    public Doacao toEntity(DtoDoacao dtoDoacao) {
+        return modelMapper.map(dtoDoacao, Doacao.class);
     }
 }

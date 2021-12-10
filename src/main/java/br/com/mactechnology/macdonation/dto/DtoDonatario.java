@@ -1,18 +1,33 @@
 package br.com.mactechnology.macdonation.dto;
 
 import br.com.mactechnology.macdonation.model.Endereco;
-import br.com.mactechnology.macdonation.model.Familiar;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.List;
 
 public class DtoDonatario {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
+
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private String nome;
+
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private String cpf;
+
+    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private LocalDate dataNascimento;
+
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private String celular;
+
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private Endereco endereco;
 
     public Long getId() {

@@ -1,10 +1,25 @@
 package br.com.mactechnology.macdonation.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class DtoFamiliar {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
+
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private String nome;
+
+    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private byte idade;
+
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private String nivelParentesco;
 
     public Long getId() {
