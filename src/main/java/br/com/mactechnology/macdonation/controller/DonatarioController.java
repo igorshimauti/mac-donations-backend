@@ -40,9 +40,13 @@ public class DonatarioController {
     }
 
     @GetMapping(value = "/{donatarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoDonatario> readById(@PathVariable Long donatarioId) {
-        Donatario donatario = donatarioService.findById(donatarioId);
-        return ResponseEntity.ok(donatarioMapper.toDto(donatario));
+    public ResponseEntity<?> readById(@PathVariable Long donatarioId) {
+        try {
+            Donatario donatario = donatarioService.findById(donatarioId);
+            return ResponseEntity.ok(donatarioMapper.toDto(donatario));
+        } catch (BusinessRulesException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping(value = "/{donatarioId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

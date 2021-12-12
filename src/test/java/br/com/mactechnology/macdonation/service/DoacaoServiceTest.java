@@ -24,6 +24,8 @@ public class DoacaoServiceTest {
 
     @Autowired
     private DoacaoService doacaoService;
+
+    private Donatario donatario;
     private Doacao doacao;
 
     @BeforeAll
@@ -38,7 +40,7 @@ public class DoacaoServiceTest {
                 "BL 8 - APTO 112"
         );
 
-        Donatario donatario = donatarioService.save(new Donatario(
+        this.donatario = donatarioService.save(new Donatario(
                 "Joaquina",
                 "526.993.790-50",
                 LocalDate.of(1993, 5, 26),
@@ -92,5 +94,8 @@ public class DoacaoServiceTest {
         doacaoService.deleteById(this.doacao.getId());
         boolean doacaoEncontrada = doacaoService.existsById(this.doacao.getId());
         assertFalse(doacaoEncontrada);
+
+        donatarioService.deleteById(this.donatario.getId());
+        assertFalse(donatarioService.existsById(this.donatario.getId()));
     }
 }

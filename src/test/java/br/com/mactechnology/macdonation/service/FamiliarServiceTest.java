@@ -24,6 +24,8 @@ public class FamiliarServiceTest {
 
     @Autowired
     private FamiliarService familiarService;
+
+    private Donatario donatario;
     private Familiar familiar;
 
     @BeforeAll
@@ -38,7 +40,7 @@ public class FamiliarServiceTest {
                 "BL 4 - APTO 84"
         );
 
-        Donatario donatario = donatarioService.save(new Donatario(
+        this.donatario = donatarioService.save(new Donatario(
                 "Joaquim",
                 "943.210.100-20",
                 LocalDate.of(1993, 5, 26),
@@ -93,5 +95,8 @@ public class FamiliarServiceTest {
         familiarService.deleteById(this.familiar.getId());
         boolean familiarEncontrado = familiarService.existsById(this.familiar.getId());
         assertFalse(familiarEncontrado);
+
+        donatarioService.deleteById(this.donatario.getId());
+        assertFalse(this.donatarioService.existsById(this.donatario.getId()));
     }
 }
