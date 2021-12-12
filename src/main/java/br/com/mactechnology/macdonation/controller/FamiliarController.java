@@ -1,6 +1,7 @@
 package br.com.mactechnology.macdonation.controller;
 
 import br.com.mactechnology.macdonation.dto.DtoFamiliar;
+import br.com.mactechnology.macdonation.exception.BusinessRulesException;
 import br.com.mactechnology.macdonation.mapper.FamiliarMapper;
 import br.com.mactechnology.macdonation.model.Familiar;
 import br.com.mactechnology.macdonation.service.DonatarioService;
@@ -52,9 +53,13 @@ public class FamiliarController {
     }
 
     @GetMapping(value = "/{familiarId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoFamiliar> readById(@PathVariable Long familiarId) {
-        Familiar familiar = familiarService.findById(familiarId);
-        return ResponseEntity.ok(familiarMapper.toDto(familiar));
+    public ResponseEntity<?> readById(@PathVariable Long familiarId) {
+        try {
+            Familiar familiar = familiarService.findById(familiarId);
+            return ResponseEntity.ok(familiarMapper.toDto(familiar));
+        } catch (BusinessRulesException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping(value = "/{familiarId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

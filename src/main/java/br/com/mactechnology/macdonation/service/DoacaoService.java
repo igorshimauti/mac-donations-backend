@@ -27,7 +27,7 @@ public class DoacaoService {
 
     @Transactional(readOnly = true)
     public Doacao findById(Long doacaoId) {
-        return doacaoRepository.findById(doacaoId).orElseThrow(() -> new BusinessRulesException("Doação não encontrado."));
+        return doacaoRepository.findById(doacaoId).orElseThrow(() -> new BusinessRulesException("Doação não encontrada."));
     }
 
     @Transactional

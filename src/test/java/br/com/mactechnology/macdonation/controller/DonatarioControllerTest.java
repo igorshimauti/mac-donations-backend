@@ -5,7 +5,6 @@ import br.com.mactechnology.macdonation.dto.DtoLogin;
 import br.com.mactechnology.macdonation.model.Endereco;
 import br.com.mactechnology.macdonation.model.Usuario;
 import br.com.mactechnology.macdonation.repository.UsuarioRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -94,12 +93,12 @@ public class DonatarioControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        String valuesLogin = result.getResponse().getContentAsString()
+        String valuesDonatario = result.getResponse().getContentAsString()
                 .replace("{", "")
                 .replace("}", "")
                 .replace("\"", "");
 
-        this.donatarioIdCriado = Long.parseLong(valuesLogin.substring(valuesLogin.indexOf(":")+1, valuesLogin.indexOf(",")));
+        this.donatarioIdCriado = Long.parseLong(valuesDonatario.substring(valuesDonatario.indexOf(":")+1, valuesDonatario.indexOf(",")));
     }
 
     @Test

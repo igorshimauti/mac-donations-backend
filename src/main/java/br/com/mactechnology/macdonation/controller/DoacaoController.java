@@ -1,6 +1,7 @@
 package br.com.mactechnology.macdonation.controller;
 
 import br.com.mactechnology.macdonation.dto.DtoDoacao;
+import br.com.mactechnology.macdonation.exception.BusinessRulesException;
 import br.com.mactechnology.macdonation.mapper.DoacaoMapper;
 import br.com.mactechnology.macdonation.model.Doacao;
 import br.com.mactechnology.macdonation.service.DoacaoService;
@@ -52,9 +53,13 @@ public class DoacaoController {
     }
 
     @GetMapping(value = "/{doacaoId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoDoacao> readDoacaoById(@PathVariable Long doacaoId) {
-        Doacao doacao = doacaoService.findById(doacaoId);
-        return ResponseEntity.ok(doacaoMapper.toDto(doacao));
+    public ResponseEntity<?> readDoacaoById(@PathVariable Long doacaoId) {
+        try {
+            Doacao doacao = doacaoService.findById(doacaoId);
+            return ResponseEntity.ok(doacaoMapper.toDto(doacao));
+        } catch (BusinessRulesException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping(value = "/{doacaoId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
