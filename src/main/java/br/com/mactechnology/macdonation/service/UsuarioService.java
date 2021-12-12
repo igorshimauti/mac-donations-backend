@@ -3,6 +3,7 @@ package br.com.mactechnology.macdonation.service;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,6 +44,16 @@ public class UsuarioService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
+    public List<Usuario> findAll() {
+        return usuarioRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Usuario> findByAutorizado(Boolean autorizado) {
+        return usuarioRepository.findByAutorizado(autorizado);
+    }
+
+    @Transactional(readOnly = true)
     public Usuario findById(Long usuarioId) {
         return usuarioRepository.findById(usuarioId).orElseThrow(() -> new BusinessRulesException("Usuário não encontrado."));
     }
@@ -50,6 +61,10 @@ public class UsuarioService implements UserDetailsService {
     @Transactional
     public void delete(Long usuarioId) {
         usuarioRepository.deleteById(usuarioId);
+    }
+
+    public boolean existsById(Long usuarioId) {
+        return usuarioRepository.existsById(usuarioId);
     }
 
     @Override

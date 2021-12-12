@@ -4,6 +4,7 @@ import br.com.mactechnology.macdonation.common.MacTechnologyUtils;
 import br.com.mactechnology.macdonation.exception.BusinessRulesException;
 import br.com.mactechnology.macdonation.model.Donatario;
 import br.com.mactechnology.macdonation.repository.DonatarioRepository;
+import br.com.mactechnology.macdonation.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,9 @@ public class DonatarioService {
 
     @Autowired
     private DonatarioRepository donatarioRepository;
+
+    @Autowired
+    private EnderecoRepository enderecoRepository;
 
     @Transactional
     public Donatario save(Donatario donatario) {
@@ -32,6 +36,10 @@ public class DonatarioService {
             if (donatarioDuplicado) {
                 throw new BusinessRulesException("Donatário com celular '" + donatario.getCelular() + "' já foi cadastrado anteriormente.");
             }
+        }
+
+        if (donatario.getEndereco() != null && donatario.getEndereco().getId() != null && !enderecoRepository.existsById(donatario.getEndereco().getId())) {
+            throw new BusinessRulesException("Endereço não encontrado.");
         }
 
         return donatarioRepository.save(donatario);

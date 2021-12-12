@@ -6,6 +6,7 @@ import br.com.mactechnology.macdonation.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class ConfigWeb extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     private static final String[] SWAGGER_WHITELIST = {"/v2/api-docs", "/swagger-resources", "/swagger-resources/**", "/configuration/ui", "/configuration/security", "/swagger-ui.html", "/webjars/**"};
+    private static final String[] USUARIO_POST_WHITELIST = {"/usuario", "/usuario/logar"};
 
     @Autowired
     private UsuarioService usuarioService;
@@ -32,16 +34,17 @@ public class ConfigWeb extends WebSecurityConfigurerAdapter implements WebMvcCon
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/usuario/logar").
-                permitAll().
-                antMatchers(SWAGGER_WHITELIST).
-                permitAll().
-                anyRequest().
-                authenticated().
-                and().cors().
-                and().csrf().disable().
-                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
-                and().addFilterBefore(new JWTAuthorizationFilter(tokenService, usuarioService), UsernamePasswordAuthenticationFilter.class);
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.POST, USUARIO_POST_WHITELIST)
+                    .permitAll()
+                .antMatchers(SWAGGER_WHITELIST)
+                    .permitAll()
+                .anyRequest()
+                .authenticated()
+                    .and().cors()
+                    .and().csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and().addFilterBefore(new JWTAuthorizationFilter(tokenService, usuarioService), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

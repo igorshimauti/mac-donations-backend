@@ -43,9 +43,6 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
     private UsuarioMapper usuarioMapper;
 
     @Autowired
@@ -66,43 +63,54 @@ public class UsuarioController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DtoUsuario>> read() {
-        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioRepository.findAll()));
+        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioService.findAll()));
     }
 
     @GetMapping(value = "/bloqueados", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DtoUsuario>> readBlocked() {
-        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioRepository.findByAutorizado(false)));
+        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioService.findByAutorizado(false)));
     }
 
     @GetMapping(value = "/autorizados", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DtoUsuario>> readAuthorized() {
-        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioRepository.findByAutorizado(true)));
+        return ResponseEntity.ok(usuarioMapper.toCollectionDto(usuarioService.findByAutorizado(true)));
     }
 
     @GetMapping(value = "/{usuarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoUsuario> readById(@PathVariable Long usuarioId) {
-        return usuarioRepository.findById(usuarioId)
-                .map(usuario -> ResponseEntity.ok(usuarioMapper.toDto(usuario)))
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> readById(@PathVariable Long usuarioId) {
+        try {
+            Usuario usuario = usuarioService.findById(usuarioId);
+            return ResponseEntity.ok(usuarioMapper.toDto(usuario));
+        }  catch (BusinessRulesException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping(value = "/{usuarioId}/autorizar", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoUsuario> authorize(@PathVariable Long usuarioId) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        Usuario usuario = usuarioService.findById(usuarioId);
-        usuario.setAutorizado(true);
-        return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.save(usuario)));
+    public ResponseEntity<?> authorize(@PathVariable Long usuarioId) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        try {
+            Usuario usuario = usuarioService.findById(usuarioId);
+            usuario.setAutorizado(true);
+            return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.save(usuario)));
+        } catch (BusinessRulesException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping(value = "/{usuarioId}/setAdmin", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoUsuario> setAdmin(@PathVariable Long usuarioId) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        Usuario usuario = usuarioService.findById(usuarioId);
-        usuario.setAdmin(true);
-        return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.save(usuario)));
+    public ResponseEntity<?> setAdmin(@PathVariable Long usuarioId) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        try {
+            Usuario usuario = usuarioService.findById(usuarioId);
+            usuario.setAdmin(true);
+            return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.save(usuario)));
+        } catch (BusinessRulesException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping(value = "/{usuarioId}")
     public ResponseEntity<Void> delete(@PathVariable Long usuarioId) {
-        if (!usuarioRepository.existsById(usuarioId)) {
+        if (!usuarioService.existsById(usuarioId)) {
             return ResponseEntity.notFound().build();
         }
 
@@ -119,7 +127,7 @@ public class UsuarioController {
             UsernamePasswordAuthenticationToken dadosLogin = input.converte();
             Authentication authentication = authenticationManager.authenticate(dadosLogin);
             String token = tokenService.gerarToken(authentication);
-            return ResponseEntity.ok(new DtoToken(token, "Bearer"));
+            return ResponseEntity.ok(new DtoToken("Bearer", token));
         } catch (AuthenticationException | BusinessRulesException e) {
             if (e.getMessage().equals("Bad credentials")) {
                 return ResponseEntity.badRequest().body("Senha incorreta.");

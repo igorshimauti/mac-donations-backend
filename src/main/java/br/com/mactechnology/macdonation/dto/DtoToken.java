@@ -2,19 +2,19 @@ package br.com.mactechnology.macdonation.dto;
 
 public class DtoToken {
 
-	private String token;
 	private String tipo;
+	private String token;
 
-	public DtoToken(String token, String tipo) {
-		this.token = token;
+	public DtoToken(String tipo, String token) {
 		this.tipo = tipo;
+		this.token = token;
+	}
+
+	public String getTipo() {
+		return tipo;
 	}
 
 	public String getToken() {
 		return token;
 	}
-
-	public String getTipo() {
-		return tipo;
-	}	
 }

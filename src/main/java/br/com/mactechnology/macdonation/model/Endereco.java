@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Endereco {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "endereco_id_seq")
     private Long id;
 
     @Column(length = 9, nullable = false)

@@ -13,7 +13,7 @@ import java.util.Objects;
 public class Donatario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "donatario_id_seq")
     private Long id;
 
     @Column(length = 150)

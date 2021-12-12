@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Familiar {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "familiar_id_seq")
     private Long id;
 
     @Column(length = 100)

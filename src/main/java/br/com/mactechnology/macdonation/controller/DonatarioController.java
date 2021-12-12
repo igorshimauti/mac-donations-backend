@@ -1,6 +1,7 @@
 package br.com.mactechnology.macdonation.controller;
 
 import br.com.mactechnology.macdonation.dto.DtoDonatario;
+import br.com.mactechnology.macdonation.exception.BusinessRulesException;
 import br.com.mactechnology.macdonation.mapper.DonatarioMapper;
 import br.com.mactechnology.macdonation.model.Donatario;
 import br.com.mactechnology.macdonation.service.DonatarioService;
@@ -45,16 +46,20 @@ public class DonatarioController {
     }
 
     @PutMapping(value = "/{donatarioId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoDonatario> update(@PathVariable Long donatarioId, @Valid @RequestBody DtoDonatario dtoDonatario) {
-        if (!donatarioService.existsById(donatarioId)) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> update(@PathVariable Long donatarioId, @Valid @RequestBody DtoDonatario dtoDonatario) {
+        try {
+            if (!donatarioService.existsById(donatarioId)) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Donatario donatario = donatarioMapper.toEntity(dtoDonatario);
+            donatario.setId(donatarioId);
+
+            Donatario donatarioSalvo = donatarioService.save(donatario);
+            return ResponseEntity.ok(donatarioMapper.toDto(donatarioSalvo));
+        } catch (BusinessRulesException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        Donatario donatario = donatarioMapper.toEntity(dtoDonatario);
-        donatario.setId(donatarioId);
-
-        Donatario donatarioSalvo = donatarioService.save(donatario);
-        return ResponseEntity.ok(donatarioMapper.toDto(donatarioSalvo));
     }
 
     @DeleteMapping(value = "/{donatarioId}")

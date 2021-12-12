@@ -12,7 +12,7 @@ import java.util.Objects;
 public class Doacao {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "doacao_id_seq")
     private Long id;
 
     @Column
