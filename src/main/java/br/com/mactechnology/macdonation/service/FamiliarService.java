@@ -1,6 +1,6 @@
 package br.com.mactechnology.macdonation.service;
 
-import br.com.mactechnology.macdonation.exception.BusinessRulesException;
+import br.com.mactechnology.macdonation.exception.BusinessException;
 import br.com.mactechnology.macdonation.model.Familiar;
 import br.com.mactechnology.macdonation.repository.FamiliarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,10 @@ public class FamiliarService {
 
     @Transactional
     public Familiar save(Familiar familiar) {
+        if (familiar.getId() != null && !familiarRepository.existsByIdAndDonatarioId(familiar.getId(), familiar.getDonatario().getId())) {
+            throw new BusinessException("Familiar não encontrado para o donatário informado.");
+        }
+
         return familiarRepository.save(familiar);
     }
 
@@ -26,12 +30,20 @@ public class FamiliarService {
     }
 
     @Transactional(readOnly = true)
-    public Familiar findById(Long familiarId) {
-        return familiarRepository.findById(familiarId).orElseThrow(() -> new BusinessRulesException("Familiar não encontrado."));
+    public Familiar findById(Long donatarioId, Long familiarId) {
+        if (!familiarRepository.existsByIdAndDonatarioId(familiarId, donatarioId)) {
+            throw new BusinessException("Familiar não encontrado para o donatário informado.");
+        }
+
+        return familiarRepository.findById(familiarId).orElseThrow(() -> new BusinessException("Familiar não encontrado."));
     }
 
     @Transactional
-    public void deleteById(Long familiarId) {
+    public void deleteById(Long donatarioId, Long familiarId) {
+        if (!familiarRepository.existsByIdAndDonatarioId(familiarId, donatarioId)) {
+            throw new BusinessException("Familiar não encontrado para o donatário informado.");
+        }
+
         familiarRepository.deleteById(familiarId);
     }
 

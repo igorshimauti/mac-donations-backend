@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import br.com.mactechnology.macdonation.model.Usuario;
-import br.com.mactechnology.macdonation.exception.BusinessRulesException;
+import br.com.mactechnology.macdonation.exception.BusinessException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,7 +28,7 @@ public class TokenService {
         Usuario logado = (Usuario) auth.getPrincipal();
 
         if (!logado.getAutorizado()) {
-            throw new BusinessRulesException("Usuário encontrado mas não possui acesso liberado. Contacte um administrador.");
+            throw new BusinessException("Usuário encontrado mas não possui acesso liberado. Contacte um administrador.");
         }
 
         return Jwts.builder().setIssuer("mac-donations")

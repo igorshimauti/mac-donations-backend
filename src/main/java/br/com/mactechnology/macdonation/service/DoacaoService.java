@@ -1,6 +1,6 @@
 package br.com.mactechnology.macdonation.service;
 
-import br.com.mactechnology.macdonation.exception.BusinessRulesException;
+import br.com.mactechnology.macdonation.exception.BusinessException;
 import br.com.mactechnology.macdonation.model.Doacao;
 import br.com.mactechnology.macdonation.repository.DoacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,10 @@ public class DoacaoService {
 
     @Transactional
     public Doacao save(Doacao doacao) {
+        if (doacao.getId() != null && !doacaoRepository.existsByIdAndDonatarioId(doacao.getId(), doacao.getDonatario().getId())) {
+            throw new BusinessException("Doação não encontrada para o donatário informado.");
+        }
+
         return doacaoRepository.save(doacao);
     }
 
@@ -26,12 +30,20 @@ public class DoacaoService {
     }
 
     @Transactional(readOnly = true)
-    public Doacao findById(Long doacaoId) {
-        return doacaoRepository.findById(doacaoId).orElseThrow(() -> new BusinessRulesException("Doação não encontrada."));
+    public Doacao findById(Long donatarioId, Long doacaoId) {
+        if (!doacaoRepository.existsByIdAndDonatarioId(doacaoId, donatarioId)) {
+            throw new BusinessException("Doação não encontrada para o donatário informado.");
+        }
+
+        return doacaoRepository.findById(doacaoId).orElseThrow(() -> new BusinessException("Doação não encontrada."));
     }
 
     @Transactional
-    public void deleteById(Long doacaoId) {
+    public void deleteById(Long donatarioId, Long doacaoId) {
+        if (!doacaoRepository.existsByIdAndDonatarioId(doacaoId, donatarioId)) {
+            throw new BusinessException("Doação não encontrada para o donatário informado.");
+        }
+
         doacaoRepository.deleteById(doacaoId);
     }
 

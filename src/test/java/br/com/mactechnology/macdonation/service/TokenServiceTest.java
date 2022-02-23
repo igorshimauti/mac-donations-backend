@@ -1,7 +1,7 @@
 package br.com.mactechnology.macdonation.service;
 
 import br.com.mactechnology.macdonation.dto.DtoLogin;
-import br.com.mactechnology.macdonation.exception.BusinessRulesException;
+import br.com.mactechnology.macdonation.exception.BusinessException;
 import br.com.mactechnology.macdonation.model.Usuario;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -79,8 +79,8 @@ public class TokenServiceTest {
 
         UsernamePasswordAuthenticationToken dadosLogin = this.login.converte();
         Authentication authentication = authenticationManager.authenticate(dadosLogin);
-        BusinessRulesException exception = assertThrows(
-                BusinessRulesException.class,
+        BusinessException exception = assertThrows(
+                BusinessException.class,
                 () -> tokenService.gerarToken(authentication),
                 "Esperado erro de por acesso bloqueado."
         );

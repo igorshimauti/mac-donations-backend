@@ -1,6 +1,6 @@
 package br.com.mactechnology.macdonation.service;
 
-import br.com.mactechnology.macdonation.exception.BusinessRulesException;
+import br.com.mactechnology.macdonation.exception.BusinessException;
 import br.com.mactechnology.macdonation.model.Usuario;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -53,8 +53,8 @@ public class UsuarioServiceTest {
     @Order(3)
     public void deleteByIdTest() {
         usuarioService.delete(this.usuario.getId());
-        BusinessRulesException exception = assertThrows(
-                BusinessRulesException.class,
+        BusinessException exception = assertThrows(
+                BusinessException.class,
                 () -> usuarioService.findById(this.usuario.getId()),
                 "Esperado erro ao buscar por usuário excluído."
         );

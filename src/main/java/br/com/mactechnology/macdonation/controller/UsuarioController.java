@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import br.com.mactechnology.macdonation.exception.BusinessRulesException;
+import br.com.mactechnology.macdonation.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,6 @@ import br.com.mactechnology.macdonation.dto.DtoUsuario;
 import br.com.mactechnology.macdonation.dto.DtoLogin;
 import br.com.mactechnology.macdonation.mapper.UsuarioMapper;
 import br.com.mactechnology.macdonation.model.Usuario;
-import br.com.mactechnology.macdonation.repository.UsuarioRepository;
 import br.com.mactechnology.macdonation.service.TokenService;
 import br.com.mactechnology.macdonation.service.UsuarioService;
 
@@ -56,7 +55,7 @@ public class UsuarioController {
         try {
             Usuario usuario = usuarioService.save(usuarioMapper.toEntity(dtoUsuario));
             return ResponseEntity.ok(usuarioMapper.toDto(usuario));
-        }  catch (BusinessRulesException e) {
+        }  catch (BusinessException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -81,8 +80,8 @@ public class UsuarioController {
         try {
             Usuario usuario = usuarioService.findById(usuarioId);
             return ResponseEntity.ok(usuarioMapper.toDto(usuario));
-        }  catch (BusinessRulesException e) {
-            return ResponseEntity.notFound().build();
+        }  catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -92,7 +91,7 @@ public class UsuarioController {
             Usuario usuario = usuarioService.findById(usuarioId);
             usuario.setAutorizado(true);
             return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.save(usuario)));
-        } catch (BusinessRulesException e) {
+        } catch (BusinessException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -103,7 +102,7 @@ public class UsuarioController {
             Usuario usuario = usuarioService.findById(usuarioId);
             usuario.setAdmin(true);
             return ResponseEntity.ok(usuarioMapper.toDto(usuarioService.save(usuario)));
-        } catch (BusinessRulesException e) {
+        } catch (BusinessException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -128,7 +127,7 @@ public class UsuarioController {
             Authentication authentication = authenticationManager.authenticate(dadosLogin);
             String token = tokenService.gerarToken(authentication);
             return ResponseEntity.ok(new DtoToken("Bearer", token));
-        } catch (AuthenticationException | BusinessRulesException e) {
+        } catch (AuthenticationException | BusinessException e) {
             if (e.getMessage().equals("Bad credentials")) {
                 return ResponseEntity.badRequest().body("Senha incorreta.");
             }

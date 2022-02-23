@@ -1,7 +1,7 @@
 package br.com.mactechnology.macdonation.controller;
 
 import br.com.mactechnology.macdonation.dto.DtoFamiliar;
-import br.com.mactechnology.macdonation.exception.BusinessRulesException;
+import br.com.mactechnology.macdonation.exception.BusinessException;
 import br.com.mactechnology.macdonation.mapper.FamiliarMapper;
 import br.com.mactechnology.macdonation.model.Familiar;
 import br.com.mactechnology.macdonation.service.DonatarioService;
@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @CrossOrigin
@@ -30,16 +31,22 @@ public class FamiliarController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DtoFamiliar> create(@PathVariable Long donatarioId, @RequestBody DtoFamiliar dtoFamiliar) {
+    public ResponseEntity<?> create(@PathVariable Long donatarioId, @RequestBody DtoFamiliar dtoFamiliar) {
         if (!donatarioService.existsById(donatarioId)) {
             return ResponseEntity.notFound().build();
         }
 
-        Familiar familiar = familiarMapper.toEntity(dtoFamiliar);
-        familiar.setDonatario(donatarioService.findById(donatarioId));
-
-        Familiar familiarSalvo = familiarService.save(familiar);
-        return ResponseEntity.ok(familiarMapper.toDto(familiarSalvo));
+        try {
+            Familiar familiar = familiarMapper.toEntity(dtoFamiliar);
+            familiar.setDonatario(donatarioService.findById(donatarioId));
+            Familiar familiarSalvo = familiarService.save(familiar);
+            URI location = URI.create(String.format("donatario/%s/familiar/%s", donatarioId, familiarSalvo.getId()));
+            return ResponseEntity.created(location).body(familiarMapper.toDto(familiarSalvo));
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,36 +60,54 @@ public class FamiliarController {
     }
 
     @GetMapping(value = "/{familiarId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> readById(@PathVariable Long familiarId) {
-        try {
-            Familiar familiar = familiarService.findById(familiarId);
-            return ResponseEntity.ok(familiarMapper.toDto(familiar));
-        } catch (BusinessRulesException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PutMapping(value = "/{familiarId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoFamiliar> update(@PathVariable Long donatarioId, @PathVariable Long familiarId, @RequestBody DtoFamiliar dtoFamiliar) {
+    public ResponseEntity<?> readById(@PathVariable Long donatarioId, @PathVariable Long familiarId) {
         if (!donatarioService.existsById(donatarioId) || !familiarService.existsById(familiarId)) {
             return ResponseEntity.notFound().build();
         }
 
-        Familiar familiar = familiarMapper.toEntity(dtoFamiliar);
-        familiar.setDonatario(donatarioService.findById(donatarioId));
-        familiar.setId(familiarId);
-
-        Familiar familiarSalvo = familiarService.save(familiar);
-        return ResponseEntity.ok(familiarMapper.toDto(familiarSalvo));
+        try {
+            Familiar familiar = familiarService.findById(donatarioId, familiarId);
+            return ResponseEntity.ok(familiarMapper.toDto(familiar));
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
-    @DeleteMapping(value = "/{familiarId}")
-    public ResponseEntity<Void> delete(@PathVariable Long familiarId) {
-        if (!familiarService.existsById(familiarId)) {
+    @PutMapping(value = "/{familiarId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> update(@PathVariable Long donatarioId, @PathVariable Long familiarId, @RequestBody DtoFamiliar dtoFamiliar) {
+        if (!donatarioService.existsById(donatarioId) || !familiarService.existsById(familiarId)) {
             return ResponseEntity.notFound().build();
         }
 
-        familiarService.deleteById(familiarId);
-        return ResponseEntity.noContent().build();
+        try {
+            Familiar familiar = familiarMapper.toEntity(dtoFamiliar);
+            familiar.setDonatario(donatarioService.findById(donatarioId));
+            familiar.setId(familiarId);
+
+            Familiar familiarSalvo = familiarService.save(familiar);
+            return ResponseEntity.ok(familiarMapper.toDto(familiarSalvo));
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping(value = "/{familiarId}")
+    public ResponseEntity<?> delete(@PathVariable Long donatarioId, @PathVariable Long familiarId) {
+        if (!donatarioService.existsById(donatarioId) || !familiarService.existsById(familiarId)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            familiarService.deleteById(donatarioId, familiarId);
+            return ResponseEntity.noContent().build();
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

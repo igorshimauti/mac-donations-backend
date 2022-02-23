@@ -10,4 +10,5 @@ import java.util.List;
 public interface DoacaoRepository extends JpaRepository<Doacao, Long> {
 
     List<Doacao> findByDonatarioIdOrderByDataDesc(Long donatarioId);
+    boolean existsByIdAndDonatarioId(Long id, Long donatarioId);
 }

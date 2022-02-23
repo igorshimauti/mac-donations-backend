@@ -1,7 +1,7 @@
 package br.com.mactechnology.macdonation.controller;
 
 import br.com.mactechnology.macdonation.dto.DtoDonatario;
-import br.com.mactechnology.macdonation.exception.BusinessRulesException;
+import br.com.mactechnology.macdonation.exception.BusinessException;
 import br.com.mactechnology.macdonation.mapper.DonatarioMapper;
 import br.com.mactechnology.macdonation.model.Donatario;
 import br.com.mactechnology.macdonation.service.DonatarioService;
@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 @CrossOrigin
@@ -26,11 +27,17 @@ public class DonatarioController {
     private DonatarioMapper donatarioMapper;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DtoDonatario> create(@Valid @RequestBody DtoDonatario dtoDonatario) {
-        Donatario donatario = donatarioMapper.toEntity(dtoDonatario);
-        Donatario donatarioSalvo = donatarioService.save(donatario);
-        return ResponseEntity.ok(donatarioMapper.toDto(donatarioSalvo));
+    public ResponseEntity<?> create(@Valid @RequestBody DtoDonatario dtoDonatario) {
+        try {
+            Donatario donatario = donatarioMapper.toEntity(dtoDonatario);
+            Donatario donatarioSalvo = donatarioService.save(donatario);
+            URI location = URI.create(String.format("donatario/%s", donatarioSalvo.getId()));
+            return ResponseEntity.created(location).body(donatarioMapper.toDto(donatarioSalvo));
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -44,8 +51,10 @@ public class DonatarioController {
         try {
             Donatario donatario = donatarioService.findById(donatarioId);
             return ResponseEntity.ok(donatarioMapper.toDto(donatario));
-        } catch (BusinessRulesException e) {
+        } catch (BusinessException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -58,11 +67,13 @@ public class DonatarioController {
 
             Donatario donatario = donatarioMapper.toEntity(dtoDonatario);
             donatario.setId(donatarioId);
-
             Donatario donatarioSalvo = donatarioService.save(donatario);
+
             return ResponseEntity.ok(donatarioMapper.toDto(donatarioSalvo));
-        } catch (BusinessRulesException e) {
+        } catch (BusinessException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 

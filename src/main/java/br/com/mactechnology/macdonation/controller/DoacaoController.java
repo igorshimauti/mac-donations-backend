@@ -1,7 +1,7 @@
 package br.com.mactechnology.macdonation.controller;
 
 import br.com.mactechnology.macdonation.dto.DtoDoacao;
-import br.com.mactechnology.macdonation.exception.BusinessRulesException;
+import br.com.mactechnology.macdonation.exception.BusinessException;
 import br.com.mactechnology.macdonation.mapper.DoacaoMapper;
 import br.com.mactechnology.macdonation.model.Doacao;
 import br.com.mactechnology.macdonation.service.DoacaoService;
@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @CrossOrigin
@@ -29,17 +30,22 @@ public class DoacaoController {
     private DoacaoMapper doacaoMapper;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DtoDoacao> createDoacao(@PathVariable Long donatarioId, @RequestBody DtoDoacao dtoDoacao) {
+    public ResponseEntity<?> createDoacao(@PathVariable Long donatarioId, @RequestBody DtoDoacao dtoDoacao) {
         if (!donatarioService.existsById(donatarioId)) {
             return ResponseEntity.notFound().build();
         }
 
-        Doacao doacao = doacaoMapper.toEntity(dtoDoacao);
-        doacao.setDonatario(donatarioService.findById(donatarioId));
-
-        Doacao doacaoSalva = doacaoService.save(doacao);
-        return ResponseEntity.ok(doacaoMapper.toDto(doacaoSalva));
+        try {
+            Doacao doacao = doacaoMapper.toEntity(dtoDoacao);
+            doacao.setDonatario(donatarioService.findById(donatarioId));
+            DtoDoacao dtoDoacaoSalva = doacaoMapper.toDto(doacaoService.save(doacao));
+            URI location = URI.create(String.format("donatario/%s/doacao/%s", donatarioId, dtoDoacaoSalva.getId()));
+            return ResponseEntity.created(location).body(dtoDoacaoSalva);
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,36 +59,50 @@ public class DoacaoController {
     }
 
     @GetMapping(value = "/{doacaoId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> readDoacaoById(@PathVariable Long doacaoId) {
+    public ResponseEntity<?> readDoacaoById(@PathVariable Long donatarioId, @PathVariable Long doacaoId) {
         try {
-            Doacao doacao = doacaoService.findById(doacaoId);
+            Doacao doacao = doacaoService.findById(donatarioId, doacaoId);
             return ResponseEntity.ok(doacaoMapper.toDto(doacao));
-        } catch (BusinessRulesException e) {
+        } catch (BusinessException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @PutMapping(value = "/{doacaoId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DtoDoacao> updateDoacao(@PathVariable Long donatarioId, @PathVariable Long doacaoId, @RequestBody DtoDoacao dtoDoacao) {
+    public ResponseEntity<?> updateDoacao(@PathVariable Long donatarioId, @PathVariable Long doacaoId, @RequestBody DtoDoacao dtoDoacao) {
         if (!donatarioService.existsById(donatarioId) || !doacaoService.existsById(doacaoId)) {
             return ResponseEntity.notFound().build();
         }
 
-        Doacao doacao = doacaoMapper.toEntity(dtoDoacao);
-        doacao.setDonatario(donatarioService.findById(donatarioId));
-        doacao.setId(doacaoId);
+        try {
+            Doacao doacao = doacaoMapper.toEntity(dtoDoacao);
+            doacao.setDonatario(donatarioService.findById(donatarioId));
+            doacao.setId(doacaoId);
 
-        Doacao doacaoSalva = doacaoService.save(doacao);
-        return ResponseEntity.ok(doacaoMapper.toDto(doacaoSalva));
+            Doacao doacaoSalva = doacaoService.save(doacao);
+            return ResponseEntity.ok(doacaoMapper.toDto(doacaoSalva));
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @DeleteMapping(value = "/{doacaoId}")
-    public ResponseEntity<Void> deleteDoacao(@PathVariable Long doacaoId) {
+    public ResponseEntity<?> deleteDoacao(@PathVariable Long donatarioId, @PathVariable Long doacaoId) {
         if (!doacaoService.existsById(doacaoId)) {
             return ResponseEntity.notFound().build();
         }
 
-        doacaoService.deleteById(doacaoId);
-        return ResponseEntity.noContent().build();
+        try {
+            doacaoService.deleteById(donatarioId, doacaoId);
+            return ResponseEntity.noContent().build();
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

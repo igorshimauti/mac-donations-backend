@@ -85,14 +85,14 @@ public class FamiliarServiceTest {
     @Test
     @Order(4)
     public void findByIdTest() {
-        Familiar familiarEncontrado = familiarService.findById(this.familiar.getId());
+        Familiar familiarEncontrado = familiarService.findById(this.familiar.getDonatario().getId(), this.familiar.getId());
         assertEquals(this.familiar, familiarEncontrado);
     }
 
     @Test
     @Order(5)
     public void deleteByIdTest() {
-        familiarService.deleteById(this.familiar.getId());
+        familiarService.deleteById(this.familiar.getDonatario().getId(), this.familiar.getId());
         boolean familiarEncontrado = familiarService.existsById(this.familiar.getId());
         assertFalse(familiarEncontrado);
 

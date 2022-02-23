@@ -84,14 +84,14 @@ public class DoacaoServiceTest {
     @Test
     @Order(4)
     public void findByIdTest() {
-        Doacao doacaoEncontrada = doacaoService.findById(this.doacao.getId());
+        Doacao doacaoEncontrada = doacaoService.findById(this.doacao.getDonatario().getId(), this.doacao.getId());
         assertEquals(this.doacao, doacaoEncontrada);
     }
 
     @Test
     @Order(5)
     public void deleteByIdTest() {
-        doacaoService.deleteById(this.doacao.getId());
+        doacaoService.deleteById(this.doacao.getDonatario().getId(), this.doacao.getId());
         boolean doacaoEncontrada = doacaoService.existsById(this.doacao.getId());
         assertFalse(doacaoEncontrada);
 

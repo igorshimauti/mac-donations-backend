@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.mactechnology.macdonation.model.Usuario;
 import br.com.mactechnology.macdonation.repository.UsuarioRepository;
-import br.com.mactechnology.macdonation.exception.BusinessRulesException;
+import br.com.mactechnology.macdonation.exception.BusinessException;
 
 @Service
 public class UsuarioService implements UserDetailsService {
@@ -25,11 +25,11 @@ public class UsuarioService implements UserDetailsService {
     @Transactional
     public Usuario save(Usuario usuario) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         if (usuarioRepository.existsByEmail(usuario.getEmail()) && usuario.getId() == null) {
-            throw new BusinessRulesException("Usuário com o login '" + usuario.getEmail() + "' já foi cadastrado anteriormente.");
+            throw new BusinessException("Usuário com o login '" + usuario.getEmail() + "' já foi cadastrado anteriormente.");
         }
 
         if (usuarioRepository.existsByCpf(usuario.getCpf()) && usuario.getId() == null) {
-            throw new BusinessRulesException("Usuário com o CPF '" + usuario.getCpf() + "' já foi cadastrado anteriormente.");
+            throw new BusinessException("Usuário com o CPF '" + usuario.getCpf() + "' já foi cadastrado anteriormente.");
         }
 
         if (usuario.getId() == null) {
@@ -55,7 +55,7 @@ public class UsuarioService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public Usuario findById(Long usuarioId) {
-        return usuarioRepository.findById(usuarioId).orElseThrow(() -> new BusinessRulesException("Usuário não encontrado."));
+        return usuarioRepository.findById(usuarioId).orElseThrow(() -> new BusinessException("Usuário não encontrado."));
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class UsuarioService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return usuarioRepository.findByEmail(username).orElseThrow(() -> new BusinessRulesException("Usuário não encontrado."));
+        return usuarioRepository.findByEmail(username).orElseThrow(() -> new BusinessException("Usuário não encontrado."));
     }
 
     public String encriptPassword(String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException {

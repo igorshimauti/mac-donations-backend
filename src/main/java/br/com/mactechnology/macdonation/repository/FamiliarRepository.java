@@ -10,4 +10,5 @@ import java.util.List;
 public interface FamiliarRepository extends JpaRepository<Familiar, Long> {
 
     List<Familiar> findByDonatarioIdOrderByNomeAsc(Long donatarioId);
+    boolean existsByIdAndDonatarioId(Long id, Long donatarioId);
 }
