@@ -1,6 +1,7 @@
 package br.com.mactechnology.macdonation.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -54,7 +55,8 @@ public class UsuarioController {
     public ResponseEntity<?> create(@Valid @RequestBody DtoUsuario dtoUsuario) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         try {
             Usuario usuario = usuarioService.save(usuarioMapper.toEntity(dtoUsuario));
-            return ResponseEntity.ok(usuarioMapper.toDto(usuario));
+            URI location = URI.create(String.format("usuario/%s", usuario.getId()));
+            return ResponseEntity.created(location).body(usuarioMapper.toDto(usuario));
         }  catch (BusinessException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

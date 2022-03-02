@@ -90,7 +90,7 @@ public class FamiliarControllerTest {
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dtoDonatario)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         String valuesDonatario = result.getResponse().getContentAsString()
@@ -118,7 +118,7 @@ public class FamiliarControllerTest {
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dtoFamiliar)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         String valuesFamiliar = result.getResponse().getContentAsString()
@@ -136,7 +136,7 @@ public class FamiliarControllerTest {
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dtoFamiliar)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         valuesFamiliar = result.getResponse().getContentAsString()
@@ -218,14 +218,12 @@ public class FamiliarControllerTest {
         mockMvc.perform(get("/donatario/" + this.donatarioIdCriado + "/familiar/" + familiaresIdCriados.get(0))
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Familiar nÃ£o encontrado."));
+                .andExpect(status().isNotFound());
 
         mockMvc.perform(get("/donatario/" + this.donatarioIdCriado + "/familiar/" + familiaresIdCriados.get(1))
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Familiar nÃ£o encontrado."));
+                .andExpect(status().isNotFound());
     }
 
     @Test

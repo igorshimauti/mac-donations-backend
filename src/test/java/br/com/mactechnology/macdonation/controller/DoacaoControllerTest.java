@@ -91,7 +91,7 @@ public class DoacaoControllerTest {
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dtoDonatario)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         String valuesDonatario = result.getResponse().getContentAsString()
@@ -118,7 +118,7 @@ public class DoacaoControllerTest {
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dtoDoacao)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         String valuesDoacao = result.getResponse().getContentAsString()
@@ -135,7 +135,7 @@ public class DoacaoControllerTest {
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dtoDoacao)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         valuesDoacao = result.getResponse().getContentAsString()
@@ -216,13 +216,13 @@ public class DoacaoControllerTest {
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("DoaÃ§Ã£o nÃ£o encontrada."));
+                .andExpect(content().string("DoaÃ§Ã£o nÃ£o encontrada para o donatÃ¡rio informado."));
 
         mockMvc.perform(get("/donatario/" + this.donatarioIdCriado + "/doacao/" + doacoesIdCriados.get(1))
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("DoaÃ§Ã£o nÃ£o encontrada."));
+                .andExpect(content().string("DoaÃ§Ã£o nÃ£o encontrada para o donatÃ¡rio informado."));
     }
 
     @Test

@@ -56,7 +56,7 @@ public class UsuarioControllerTest {
         MvcResult result = mockMvc.perform(post("/usuario")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(usuario)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         String valuesLogin = result.getResponse().getContentAsString()
@@ -153,6 +153,7 @@ public class UsuarioControllerTest {
         mockMvc.perform(get("/usuario/" + this.usuarioIdCriado)
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("UsuÃ¡rio nÃ£o encontrado."));
     }
 }

@@ -74,6 +74,11 @@ public class DonatarioControllerTest {
         }
     }
 
+    @AfterAll
+    public void finalization() {
+        usuarioRepository.deleteById(admin.getId());
+    }
+
     @Test
     @Order(1)
     public void createTest() throws Exception {
@@ -90,7 +95,7 @@ public class DonatarioControllerTest {
                         .header("Authorization", this.token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dtoDonatario)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         String valuesDonatario = result.getResponse().getContentAsString()
